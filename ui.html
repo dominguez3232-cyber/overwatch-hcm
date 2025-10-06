@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OVERWATCH³ Caption Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0a1628 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 16px;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #334155;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .subtitle {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .form-input, .form-select {
+      width: 100%;
+      padding: 12px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+    
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .form-input::placeholder {
+      color: #64748b;
+    }
+    
+    .quick-presets {
+      margin-bottom: 20px;
+    }
+    
+    .preset-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .preset-btn {
+      background: #374151;
+      border: 1px solid #4b5563;
+      border-radius: 6px;
+      padding: 8px;
+      color: #d1d5db;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    
+    .preset-btn:hover {
+      background: #4b5563;
+      border-color: #6b7280;
+    }
+    
+    .preset-metric {
+      font-weight: 600;
+      display: block;
+    }
+    
+    .preset-type {
+      color: #9ca3af;
+      font-size: 10px;
+    }
+    
+    .generate-section {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #334155;
+    }
+    
+    .generate-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .generate-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+    
+    .generate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .result-section {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 8px;
+      display: none;
+    }
+    
+    .result-section.show {
+      display: block;
+    }
+    
+    .result-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #10b981;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .result-text {
+      font-size: 14px;
+      line-height: 1.4;
+      color: #ffffff;
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+    
+    .result-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .action-btn {
+      background: #374151;
+      border: 1px solid #4b5563;
+      border-radius: 6px;
+      padding: 6px 12px;
+      color: #d1d5db;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .action-btn:hover {
+      background: #4b5563;
+    }
+    
+    .config-section {
+      margin-bottom: 20px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      border: 1px solid #334155;
+    }
+    
+    .config-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .config-row:last-child {
+      margin-bottom: 0;
+    }
+    
+    .config-input {
+      flex: 1;
+      padding: 8px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 12px;
+    }
+    
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    
+    .status-indicator.connected {
+      background: #10b981;
+    }
+    
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 6px;
+      padding: 12px;
+      color: #fca5a5;
+      font-size: 12px;
+      margin-top: 12px;
+      display: none;
+    }
+    
+    .error-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+      </div>
+      <div class="title">OVERWATCH³</div>
+      <div class="subtitle">Caption Generator</div>
+    </div>
+    
+    <div class="config-section">
+      <div class="form-label">
+        <span class="status-indicator" id="status-indicator"></span>
+        API Configuration
+      </div>
+      <div class="config-row">
+        <input type="text" id="endpoint" class="config-input" placeholder="Functions URL" />
+      </div>
+      <div class="config-row">
+        <input type="text" id="token" class="config-input" placeholder="Bearer token (optional)" />
+      </div>
+    </div>
+    
+    <div class="quick-presets">
+      <div class="form-label">Quick Presets</div>
+      <div class="preset-grid">
+        <button class="preset-btn" data-preset="adoption">
+          <span class="preset-metric">87% Adoption Rate</span>
+          <span class="preset-type">Human Capital</span>
+        </button>
+        <button class="preset-btn" data-preset="revenue">
+          <span class="preset-metric">$3.4M Revenue Lift</span>
+          <span class="preset-type">Financial</span>
+        </button>
+        <button class="preset-btn" data-preset="efficiency">
+          <span class="preset-metric">42% Faster</span>
+          <span class="preset-type">Operational</span>
+        </button>
+        <button class="preset-btn" data-preset="alignment">
+          <span class="preset-metric">94% Accuracy</span>
+          <span class="preset-type">Strategic</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Metric</label>
+      <input type="text" id="metric" class="form-input" placeholder="e.g., Adoption Rate" />
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Value</label>
+      <input type="text" id="value" class="form-input" placeholder="e.g., 87%" />
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Impact Type</label>
+      <select id="impact" class="form-select">
+        <option value="humanCapital">Human Capital</option>
+        <option value="financial">Financial</option>
+        <option value="operational">Operational</option>
+        <option value="strategic">Strategic</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Deployment Context</label>
+      <select id="deployment" class="form-select">
+        <option value="founderContext">Founder Context</option>
+        <option value="solooperatorContext">Solo Operator Context</option>
+        <option value="enterpriseContext">Enterprise Context</option>
+        <option value="crossborderContext">Cross-border Context</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Language</label>
+      <select id="language" class="form-select">
+        <option value="EN">English</option>
+        <option value="ES">Español</option>
+      </select>
+    </div>
+    
+    <div class="generate-section">
+      <button id="generate" class="generate-btn">Generate Caption</button>
+    </div>
+    
+    <div id="result" class="result-section">
+      <div class="result-label">Generated Caption</div>
+      <div id="caption-text" class="result-text"></div>
+      <div class="result-actions">
+        <button id="apply" class="action-btn">Apply to Layer</button>
+        <button id="copy" class="action-btn">Copy Text</button>
+      </div>
+    </div>
+    
+    <div id="error" class="error-message"></div>
+  </div>
+
+  <script>
+    // Configuration
+    let currentCaption = '';
+    
+    // DOM Elements
+    const endpointInput = document.getElementById('endpoint');
+    const tokenInput = document.getElementById('token');
+    const statusIndicator = document.getElementById('status-indicator');
+    const metricInput = document.getElementById('metric');
+    const valueInput = document.getElementById('value');
+    const impactSelect = document.getElementById('impact');
+    const deploymentSelect = document.getElementById('deployment');
+    const languageSelect = document.getElementById('language');
+    const generateBtn = document.getElementById('generate');
+    const resultSection = document.getElementById('result');
+    const captionText = document.getElementById('caption-text');
+    const applyBtn = document.getElementById('apply');
+    const copyBtn = document.getElementById('copy');
+    const errorDiv = document.getElementById('error');
+    
+    // Presets
+    const presets = {
+      adoption: {
+        metric: 'Adoption Rate',
+        value: '87%',
+        impact: 'humanCapital',
+        deployment: 'founderContext'
+      },
+      revenue: {
+        metric: 'Revenue Lift',
+        value: '$3.4M projected',
+        impact: 'financial',
+        deployment: 'founderContext'
+      },
+      efficiency: {
+        metric: 'Process Efficiency',
+        value: '42% faster',
+        impact: 'operational',
+        deployment: 'enterpriseContext'
+      },
+      alignment: {
+        metric: 'Strategic Alignment',
+        value: '94% accuracy',
+        impact: 'strategic',
+        deployment: 'crossborderContext'
+      }
+    };
+    
+    // Initialize
+    function init() {
+      // Load saved configuration
+      const savedEndpoint = localStorage.getItem('overwatch3-endpoint');
+      const savedToken = localStorage.getItem('overwatch3-token');
+      
+      if (savedEndpoint) {
+        endpointInput.value = savedEndpoint;
+        checkConnection();
+      }
+      if (savedToken) {
+        tokenInput.value = savedToken;
+      }
+      
+      // Set default values
+      metricInput.value = 'Adoption Rate';
+      valueInput.value = '87%';
+      
+      bindEvents();
+    }
+    
+    function bindEvents() {
+      // Configuration changes
+      endpointInput.addEventListener('change', () => {
+        localStorage.setItem('overwatch3-endpoint', endpointInput.value);
+        checkConnection();
+      });
+      
+      tokenInput.addEventListener('change', () => {
+        localStorage.setItem('overwatch3-token', tokenInput.value);
+      });
+      
+      // Preset buttons
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const preset = presets[btn.dataset.preset];
+          if (preset) {
+            metricInput.value = preset.metric;
+            valueInput.value = preset.value;
+            impactSelect.value = preset.impact;
+            deploymentSelect.value = preset.deployment;
+          }
+        });
+      });
+      
+      // Generate button
+      generateBtn.addEventListener('click', generateCaption);
+      
+      // Action buttons
+      applyBtn.addEventListener('click', applyToLayer);
+      copyBtn.addEventListener('click', copyToClipboard);
+    }
+    
+    function checkConnection() {
+      const endpoint = endpointInput.value.trim();
+      if (endpoint) {
+        statusIndicator.classList.add('connected');
+      } else {
+        statusIndicator.classList.remove('connected');
+      }
+    }
+    
+    function showError(message) {
+      errorDiv.textContent = message;
+      errorDiv.classList.add('show');
+      setTimeout(() => {
+        errorDiv.classList.remove('show');
+      }, 5000);
+    }
+    
+    function showResult(caption) {
+      currentCaption = caption;
+      captionText.textContent = `"${caption}"`;
+      resultSection.classList.add('show');
+    }
+    
+    async function generateCaption() {
+      const endpoint = endpointInput.value.trim();
+      if (!endpoint) {
+        showError('Please configure the Functions URL first');
+        return;
+      }
+      
+      const metric = metricInput.value.trim();
+      const value = valueInput.value.trim();
+      
+      if (!metric || !value) {
+        showError('Please enter both metric and value');
+        return;
+      }
+      
+      generateBtn.disabled = true;
+      generateBtn.textContent = 'Generating...';
+      
+      try {
+        const headers = {
+          'Content-Type': 'application/json'
+        };
+        
+        const token = tokenInput.value.trim();
+        if (token) {
+          headers.Authorization = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+        }
+        
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            metric,
+            value,
+            impact_type: impactSelect.value,
+            deployment_type: deploymentSelect.value,
+            language: languageSelect.value
+          })
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText.slice(0, 120));
+        }
+        
+        const data = await response.json();
+        showResult(data.caption);
+        
+        // Notify main thread
+        parent.postMessage({
+          pluginMessage: {
+            type: 'caption-generated',
+            caption: data.caption,
+            meta: data.meta
+          }
+        }, '*');
+        
+      } catch (error) {
+        showError(`Generation failed: ${error.message}`);
+      } finally {
+        generateBtn.disabled = false;
+        generateBtn.textContent = 'Generate Caption';
+      }
+    }
+    
+    function applyToLayer() {
+      if (currentCaption) {
+        parent.postMessage({
+          pluginMessage: {
+            type: 'apply-caption',
+            caption: currentCaption
+          }
+        }, '*');
+      }
+    }
+    
+    function copyToClipboard() {
+      if (currentCaption) {
+        navigator.clipboard.writeText(currentCaption).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => {
+            copyBtn.textContent = 'Copy Text';
+          }, 2000);
+        });
+      }
+    }
+    
+    // Message handling from main thread
+    window.addEventListener('message', (event) => {
+      const msg = event.data.pluginMessage;
+      if (msg.type === 'selection-changed') {
+        // Handle selection changes if needed
+      }
+    });
+    
+    // Initialize the plugin
+    init();
+  </script>
+</body>
+</html>
